@@ -27,7 +27,8 @@ namespace authServer.Controller
             {
                 name = dto.name,
                 createDate = DateTimeOffset.UtcNow,
-                id = Guid.NewGuid()
+                id = Guid.NewGuid(),
+                hash = BCrypt.Net.BCrypt.HashPassword(dto.password)
             };
 
             await repository.register(user);

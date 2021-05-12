@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "hnnvTaHk+OZV8vBU59ZOeE0G1C/ijfeIZC8aSeZSF8fbrhKq2MSXePB0Sjq3HXPYvYCK/Gf7H7ef+mqhkt28bA==",
+  "dgSpecHash": "EBgLEnEcrP1jm3P61DkHW5jU6jSqSUw2DJM30sF1+M/3hXj4i+ivGFEEifIwbyB797juhQqwS8tS8Jzh2HZC5Q==",
   "success": true,
   "projectFilePath": "/home/mert/authServer/authServer.csproj",
   "expectedPackageFiles": [
+    "/home/mert/.nuget/packages/bcrypt.net-next/4.0.2/bcrypt.net-next.4.0.2.nupkg.sha512",
     "/home/mert/.nuget/packages/dnsclient/1.4.0/dnsclient.1.4.0.nupkg.sha512",
     "/home/mert/.nuget/packages/microsoft.extensions.apidescription.server/3.0.0/microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
     "/home/mert/.nuget/packages/microsoft.netcore.platforms/2.1.2/microsoft.netcore.platforms.2.1.2.nupkg.sha512",

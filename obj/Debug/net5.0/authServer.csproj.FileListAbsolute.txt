@@ -39,3 +39,4 @@
 /home/mert/authServer/bin/Debug/net5.0/runtimes/linux/native/libmongocrypt.so
 /home/mert/authServer/bin/Debug/net5.0/runtimes/osx/native/libmongocrypt.dylib
 /home/mert/authServer/bin/Debug/net5.0/runtimes/win/native/mongocrypt.dll
+/home/mert/authServer/bin/Debug/net5.0/BCrypt.Net-Next.dll

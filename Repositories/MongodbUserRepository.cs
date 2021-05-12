@@ -10,6 +10,13 @@ namespace authServer.Repositories
         private readonly IMongoCollection<User> collection;
         private readonly FilterDefinitionBuilder<User> filterDefinitionBuilder = Builders<User>.Filter;
 
+        /**
+         * <summary> 
+         * initialisates the collection
+         * </summary>
+         *
+         * <param name="mongoClient">Correct MongoClient</param>
+         */
         public MongoDbUserRepository(IMongoClient mongoClient)
         {
             IMongoDatabase database = mongoClient.GetDatabase(Startup.databaseName);
@@ -29,6 +36,16 @@ namespace authServer.Repositories
             var user = await collection.Find(filter).SingleOrDefaultAsync();
 
             return user;
+        }
+
+        public async Task<string> login(string name, string password)
+        {
+            User user = await getUser(name);
+
+            if (user is null) return null;
+            if (!BCrypt.Net.BCrypt.Verify(password, user.hash)) return null;
+
+            return "OK";
         }
     }
 }
