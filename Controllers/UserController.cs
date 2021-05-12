@@ -8,20 +8,21 @@ using authServer.Repositories;
 namespace authServer.Controller
 {
     [ApiController]
-    [Route("register")]
-    public class RegisterController : ControllerBase
+    [Route("users")]
+    public class UserController : ControllerBase
     {
         private readonly IUserRepository repository;
 
-        public RegisterController(IUserRepository repository)
+        public UserController(IUserRepository repository)
         {
             this.repository = repository;
         }
 
-        [HttpPost]
+        // users/register
+        [HttpPost("register")]
         public async Task<ActionResult<RegisterDto>> register(RegisterDto dto)
         {
-            if (!(await repository.getUser(dto.name) is null)) return NotFound();
+            if (!(await repository.getUser(dto.name) is null)) return BadRequest("User is already taken");
 
             User user = new()
             {
@@ -34,6 +35,17 @@ namespace authServer.Controller
             await repository.register(user);
 
             return Ok();
+        }
+
+        // users/login
+        [HttpPost("login")]
+        public async Task<ActionResult<string>> login(RegisterDto dto)
+        {
+            string jwsToken = await repository.login(dto.name, dto.password);
+
+            if (jwsToken is null) return BadRequest("Password or Username is false");
+
+            return Ok(jwsToken);
         }
     }
 }

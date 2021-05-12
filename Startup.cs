@@ -32,6 +32,18 @@ namespace authServer
             BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
             BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
 
+            services.AddAuthentication(options =>
+                             {
+                                 options.DefaultAuthenticateScheme = JwtAuthenticationDefaults.AuthenticationScheme;
+                                 options.DefaultChallengeScheme = JwtAuthenticationDefaults.AuthenticationScheme;
+                             })
+                        .AddJwt(options =>
+                             {
+                                 options.Keys = new[] { "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk" };
+
+                                 options.VerifySignature = true;
+                             });
+
             services.AddSingleton<IMongoClient>(ServiceProvider =>
             {
                 databaseName = settings.Database;
