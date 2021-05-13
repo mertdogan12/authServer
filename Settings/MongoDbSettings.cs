@@ -7,12 +7,17 @@ namespace authServer.Settings
         public string Database { get; set; }
         public string User { get; set; }
         public string Password { get; set; }
+        public string Url { get; set; }
 
         public string connectionString
         {
             get
             {
-                return $"mongodb://{User}:{Password}@{Host}:{Port}/{Database}";
+                return Url.Replace("<user>", User)
+                    .Replace("<password>", Password)
+                    .Replace("<host>", Host)
+                    .Replace("<port>", Port.ToString())
+                    .Replace("<database>", Database);
             }
         }
     }
