@@ -1,27 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\mert\\authServer\\authServer.csproj": {}
+    "/home/mert/authServer/authServer.csproj": {}
   },
   "projects": {
-    "C:\\Users\\mert\\authServer\\authServer.csproj": {
+    "/home/mert/authServer/authServer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\mert\\authServer\\authServer.csproj",
+        "projectUniqueName": "/home/mert/authServer/authServer.csproj",
         "projectName": "authServer",
-        "projectPath": "C:\\Users\\mert\\authServer\\authServer.csproj",
-        "packagesPath": "C:\\Users\\mert\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\mert\\authServer\\obj\\",
+        "projectPath": "/home/mert/authServer/authServer.csproj",
+        "packagesPath": "/home/mert/.nuget/packages/",
+        "outputPath": "/home/mert/authServer/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\mert\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/mert/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net5.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -44,6 +42,10 @@
               "target": "Package",
               "version": "[4.0.2, )"
             },
+            "Microsoft.IdentityModel.Tokens": {
+              "target": "Package",
+              "version": "[6.11.0, )"
+            },
             "MongoDB.Driver": {
               "target": "Package",
               "version": "[2.12.3, )"
@@ -51,6 +53,10 @@
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[5.6.3, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[6.11.0, )"
             }
           },
           "imports": [
@@ -71,7 +77,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.102\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/home/mert/.dotnet/sdk/5.0.202/RuntimeIdentifierGraph.json"
         }
       }
     }

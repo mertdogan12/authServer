@@ -1,9 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Collections.Generic;
+using System.Security.Claims;
 using System;
 using authServer.Models;
 using authServer.Dtos;
 using System.Threading.Tasks;
 using authServer.Repositories;
+using authServer.Managers;
 
 namespace authServer.Controller
 {
@@ -46,6 +51,28 @@ namespace authServer.Controller
             if (jwsToken is null) return BadRequest("Password or Username is false");
 
             return Ok(jwsToken);
+        }
+
+        // users/jwt
+        [HttpGet("jwt")]
+        public ActionResult<IEnumerable<Claim>> jwt()
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(' ')[1];
+
+            IAuthContainerModel model = new JWTContainerModel();
+            IAuthService service = new JWTService(model.secredKey);
+
+            if (!service.isTokenValid(token))
+                return BadRequest("Token is not valid");
+
+            var claims = service.getTokenClaims(token).GetEnumerator();
+
+            Dictionary<string, string> claimsDictionary = new();
+
+            while (claims.MoveNext())
+                claimsDictionary.Add(claims.Current.Type, claims.Current.Value);
+
+            return Ok(JsonSerializer.Serialize(claimsDictionary).ToString());
         }
     }
 }

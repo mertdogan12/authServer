@@ -1,8 +1,8 @@
 {
   "runtimeOptions": {
     "additionalProbingPaths": [
-      "C:\\Users\\mert\\.dotnet\\store\\|arch|\\|tfm|",
-      "C:\\Users\\mert\\.nuget\\packages"
+      "/home/mert/.dotnet/store/|arch|/|tfm|",
+      "/home/mert/.nuget/packages"
     ]
   }
 }

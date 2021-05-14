@@ -1,6 +1,11 @@
 using System.Threading.Tasks;
 using authServer.Models;
 using MongoDB.Driver;
+using System;
+using System.Linq;
+using System.Security.Claims;
+using System.Collections.Generic;
+using authServer.Managers;
 
 namespace authServer.Repositories
 {
@@ -45,7 +50,20 @@ namespace authServer.Repositories
             if (user is null) return null;
             if (!BCrypt.Net.BCrypt.Verify(password, user.hash)) return null;
 
-            return "OK";
+            IAuthContainerModel model = new JWTContainerModel()
+            {
+                claims = new Claim[] {
+                    new Claim(ClaimTypes.Name, name)
+                }
+            };
+            IAuthService authService = new JWTService(model.secredKey);
+
+            string token = authService.generateToken(model);
+
+            if (!authService.isTokenValid(token))
+                return "Token is not valid";
+
+            return token;
         }
     }
 }
