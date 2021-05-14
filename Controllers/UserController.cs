@@ -57,6 +57,9 @@ namespace authServer.Controller
         [HttpGet("jwt")]
         public ActionResult<IEnumerable<Claim>> jwt()
         {
+            if (string.IsNullOrWhiteSpace(Request.Headers["Authorization"]))
+                return BadRequest("No Authorization token given");
+
             string token = Request.Headers["Authorization"].ToString().Split(' ')[1];
 
             IAuthContainerModel model = new JWTContainerModel();
