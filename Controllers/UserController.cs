@@ -112,6 +112,35 @@ namespace authServer.Controller
 
             return (output == "Ok") ? Ok() : BadRequest(output);
         }
+
+        // users/changeUsername
+        [HttpPost("changeUsername")]
+        public async Task<ActionResult<string>> changeUsername(ChanceUsernameDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(Request.Headers["Authorization"]))
+                return BadRequest("No Authorization token given");
+
+            string[] tokenArray = Request.Headers["Authorization"].ToString().Split(' ');
+
+            if (tokenArray.Length != 2)
+                return BadRequest("No Authorization token is given");
+
+            string token = tokenArray[1];
+
+            if (!service.isTokenValid(token))
+                return BadRequest("Token is not valid");
+
+            var claims = service.getTokenClaims(token).GetEnumerator();
+            string username = "";
+
+            while (claims.MoveNext())
+                if (claims.Current.Type.Equals(ClaimTypes.Name))
+                    username = claims.Current.Value;
+
+            var output = await repository.changeUsername(username, dto.newUsername);
+
+            return (output == "Ok") ? Ok() : BadRequest(output);
+        }
         #endregion
     }
 }

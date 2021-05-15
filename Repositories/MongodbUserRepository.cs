@@ -80,5 +80,24 @@ namespace authServer.Repositories
 
             return "Ok";
         }
+
+        public async Task<string> changeUsername(string oldUsername, string newUsername)
+        {
+            User user = await getUser(oldUsername);
+            User user2 = await getUser(newUsername);
+
+            if (user is null) return "User not found";
+            if (!(user2 is null)) return "Username is already taken";
+
+            User newUser = user with
+            {
+                name = newUsername
+            };
+            var filter = filterDefinitionBuilder.Eq(user => user.name, oldUsername);
+
+            await collection.ReplaceOneAsync(filter, newUser);
+
+            return "Ok";
+        }
     }
 }

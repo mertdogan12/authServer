@@ -38,5 +38,14 @@ namespace authServer.Repositories
         /// <param name="username"/>
         /// <returns/>
         Task<string> changePassword(string oldPassword, string newPassword, string username);
+
+        /// <summary>
+        /// Change the Username form an user
+        /// </summary>
+        ///
+        /// <param name="oldUsername"/>
+        /// <param name="newUsername"/>
+        /// <returns/>
+        Task<string> changeUsername(string oldUsername, string newUsername);
     }
 }
