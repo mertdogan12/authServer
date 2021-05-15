@@ -1,10 +1,7 @@
 using System.Threading.Tasks;
 using authServer.Models;
 using MongoDB.Driver;
-using System;
-using System.Linq;
 using System.Security.Claims;
-using System.Collections.Generic;
 using authServer.Managers;
 
 namespace authServer.Repositories
@@ -64,6 +61,24 @@ namespace authServer.Repositories
                 return "Token is not valid";
 
             return token;
+        }
+
+        public async Task<string> changePassword(string oldPassword, string newPassword, string username)
+        {
+            User user = await getUser(username);
+
+            if (user is null) return "User not found";
+            if (!BCrypt.Net.BCrypt.Verify(oldPassword, user.hash)) return "Password is wrong";
+
+            User newUser = user with
+            {
+                hash = BCrypt.Net.BCrypt.HashPassword(newPassword)
+            };
+            var filter = filterDefinitionBuilder.Eq(user => user.name, username);
+
+            await collection.ReplaceOneAsync(filter, newUser);
+
+            return "Ok";
         }
     }
 }

@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System;
@@ -17,12 +16,17 @@ namespace authServer.Controller
     public class UserController : ControllerBase
     {
         private readonly IUserRepository repository;
+        private readonly IAuthContainerModel model;
+        private readonly IAuthService service;
 
         public UserController(IUserRepository repository)
         {
             this.repository = repository;
+            model = new JWTContainerModel();
+            service = new JWTService(model.secredKey);
         }
 
+        #region Controller
         // users/register
         [HttpPost("register")]
         public async Task<ActionResult<RegisterDto>> register(RegisterDto dto)
@@ -55,15 +59,17 @@ namespace authServer.Controller
 
         // users/jwt
         [HttpGet("jwt")]
-        public ActionResult<IEnumerable<Claim>> jwt()
+        public ActionResult<IEnumerable<ClaimDto>> jwt()
         {
             if (string.IsNullOrWhiteSpace(Request.Headers["Authorization"]))
                 return BadRequest("No Authorization token given");
 
-            string token = Request.Headers["Authorization"].ToString().Split(' ')[1];
+            string[] tokenArray = Request.Headers["Authorization"].ToString().Split(' ');
 
-            IAuthContainerModel model = new JWTContainerModel();
-            IAuthService service = new JWTService(model.secredKey);
+            if (tokenArray.Length != 2)
+                return BadRequest("No Authorization token is given");
+
+            string token = tokenArray[1];
 
             if (!service.isTokenValid(token))
                 return BadRequest("Token is not valid");
@@ -77,5 +83,35 @@ namespace authServer.Controller
 
             return Ok(JsonSerializer.Serialize(claimsDictionary).ToString());
         }
+
+        // users/changePassword
+        [HttpPost("changePassword")]
+        public async Task<ActionResult<string>> changePassword(ChancePasswordDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(Request.Headers["Authorization"]))
+                return BadRequest("No Authorization token given");
+
+            string[] tokenArray = Request.Headers["Authorization"].ToString().Split(' ');
+
+            if (tokenArray.Length != 2)
+                return BadRequest("No Authorization token is given");
+
+            string token = tokenArray[1];
+
+            if (!service.isTokenValid(token))
+                return BadRequest("Token is not valid");
+
+            var claims = service.getTokenClaims(token).GetEnumerator();
+            string username = "";
+
+            while (claims.MoveNext())
+                if (claims.Current.Type.Equals(ClaimTypes.Name))
+                    username = claims.Current.Value;
+
+            string output = await repository.changePassword(dto.oldPassword, dto.newPassword, username);
+
+            return (output == "Ok") ? Ok() : BadRequest(output);
+        }
+        #endregion
     }
 }
