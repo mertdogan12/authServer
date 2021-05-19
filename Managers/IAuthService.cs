@@ -11,5 +11,6 @@ namespace authServer.Managers
         bool isTokenValid(string token);
         string generateToken(IAuthContainerModel model);
         IEnumerable<Claim> getTokenClaims(string token);
+        Dictionary<string, string> getClaims(string authorizationHeader);
     }
 }

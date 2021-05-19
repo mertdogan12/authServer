@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using authServer.Models;
+using System;
 
 namespace authServer.Repositories
 {
@@ -16,9 +17,17 @@ namespace authServer.Repositories
         /// gets an User
         /// </summary>
         ///
-        /// <param name="name">Name of the User</param>
-        /// <return>The User</return>
+        /// <param name="name"/>
+        /// <returns>The User</returns>
         Task<User> getUser(string name);
+
+        /// <summary>
+        /// gets an User
+        /// </summary>
+        ///
+        /// <param name="id"/>
+        /// <returns>The User</returns>
+        Task<User> getUser(Guid id);
 
         /// <summary>
         /// Logs an User in
@@ -26,7 +35,7 @@ namespace authServer.Repositories
         ///
         /// <param name="name">User name</param>
         /// <param name="password">Login Password</param>
-        /// <return>Jws Token</return>
+        /// <returns>Jws Token</returns>
         Task<string> login(string name, string password);
 
         /// <summary>
@@ -37,7 +46,7 @@ namespace authServer.Repositories
         /// <param name="newPassword"/>
         /// <param name="username"/>
         /// <returns/>
-        Task<string> changePassword(string oldPassword, string newPassword, string username);
+        Task<string> changePassword(string oldPassword, string newPassword, Guid id);
 
         /// <summary>
         /// Change the Username form an user
@@ -46,6 +55,6 @@ namespace authServer.Repositories
         /// <param name="oldUsername"/>
         /// <param name="newUsername"/>
         /// <returns/>
-        Task<string> changeUsername(string oldUsername, string newUsername);
+        Task<string> changeUsername(Guid id, string newUsername);
     }
 }

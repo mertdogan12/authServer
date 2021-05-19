@@ -119,6 +119,38 @@ namespace authServer.Managers
                 throw ex;
             }
         }
+
+        /// <summary>
+        /// gets the Claims from an token
+        /// checks if the token if valid
+        /// </summary>
+        ///
+        /// <param name="token">The authorisations token</param>
+        /// <returns/>
+        public Dictionary<string, string> getClaims(string authorizationHeader)
+        {
+            if (string.IsNullOrWhiteSpace(authorizationHeader))
+                throw new Exception("No Authorization token given");
+
+            string[] tokenArray = authorizationHeader.ToString().Split(' ');
+
+            if (tokenArray.Length != 2)
+                throw new Exception("No Authorization token is given");
+
+            string token = tokenArray[1];
+
+            if (!isTokenValid(token))
+                throw new Exception("Token is not valid");
+
+            var claims = getTokenClaims(token).GetEnumerator();
+
+            Dictionary<string, string> claimsDictionary = new();
+
+            while (claims.MoveNext())
+                claimsDictionary.Add(claims.Current.Type, claims.Current.Value);
+
+            return claimsDictionary;
+        }
         #endregion
     }
 }

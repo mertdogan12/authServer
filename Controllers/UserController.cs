@@ -61,54 +61,34 @@ namespace authServer.Controller
         [HttpGet("jwt")]
         public ActionResult<IEnumerable<ClaimDto>> jwt()
         {
-            if (string.IsNullOrWhiteSpace(Request.Headers["Authorization"]))
-                return BadRequest("No Authorization token given");
-
-            string[] tokenArray = Request.Headers["Authorization"].ToString().Split(' ');
-
-            if (tokenArray.Length != 2)
-                return BadRequest("No Authorization token is given");
-
-            string token = tokenArray[1];
-
-            if (!service.isTokenValid(token))
-                return BadRequest("Token is not valid");
-
-            var claims = service.getTokenClaims(token).GetEnumerator();
-
-            Dictionary<string, string> claimsDictionary = new();
-
-            while (claims.MoveNext())
-                claimsDictionary.Add(claims.Current.Type, claims.Current.Value);
-
-            return Ok(JsonSerializer.Serialize(claimsDictionary).ToString());
+            try
+            {
+                Dictionary<string, string> claimsDictionary = service.getClaims(Request.Headers["Authorization"]);
+                return Ok(JsonSerializer.Serialize(claimsDictionary).ToString());
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         // users/changePassword
         [HttpPost("changePassword")]
         public async Task<ActionResult<string>> changePassword(ChancePasswordDto dto)
         {
-            if (string.IsNullOrWhiteSpace(Request.Headers["Authorization"]))
-                return BadRequest("No Authorization token given");
+            Guid id = Guid.Empty;
 
-            string[] tokenArray = Request.Headers["Authorization"].ToString().Split(' ');
+            try
+            {
+                Dictionary<string, string> claimsDictionary = service.getClaims(Request.Headers["Authorization"]);
+                id = Guid.Parse(claimsDictionary.GetValueOrDefault("id"));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
 
-            if (tokenArray.Length != 2)
-                return BadRequest("No Authorization token is given");
-
-            string token = tokenArray[1];
-
-            if (!service.isTokenValid(token))
-                return BadRequest("Token is not valid");
-
-            var claims = service.getTokenClaims(token).GetEnumerator();
-            string username = "";
-
-            while (claims.MoveNext())
-                if (claims.Current.Type.Equals(ClaimTypes.Name))
-                    username = claims.Current.Value;
-
-            string output = await repository.changePassword(dto.oldPassword, dto.newPassword, username);
+            string output = await repository.changePassword(dto.oldPassword, dto.newPassword, id);
 
             return (output == "Ok") ? Ok() : BadRequest(output);
         }
@@ -117,27 +97,19 @@ namespace authServer.Controller
         [HttpPost("changeUsername")]
         public async Task<ActionResult<string>> changeUsername(ChanceUsernameDto dto)
         {
-            if (string.IsNullOrWhiteSpace(Request.Headers["Authorization"]))
-                return BadRequest("No Authorization token given");
+            Guid id = Guid.Empty;
 
-            string[] tokenArray = Request.Headers["Authorization"].ToString().Split(' ');
+            try
+            {
+                Dictionary<string, string> claimsDictionary = service.getClaims(Request.Headers["Authorization"]);
+                id = Guid.Parse(claimsDictionary.GetValueOrDefault("id"));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
 
-            if (tokenArray.Length != 2)
-                return BadRequest("No Authorization token is given");
-
-            string token = tokenArray[1];
-
-            if (!service.isTokenValid(token))
-                return BadRequest("Token is not valid");
-
-            var claims = service.getTokenClaims(token).GetEnumerator();
-            string username = "";
-
-            while (claims.MoveNext())
-                if (claims.Current.Type.Equals(ClaimTypes.Name))
-                    username = claims.Current.Value;
-
-            var output = await repository.changeUsername(username, dto.newUsername);
+            var output = await repository.changeUsername(id, dto.newUsername);
 
             return (output == "Ok") ? Ok() : BadRequest(output);
         }

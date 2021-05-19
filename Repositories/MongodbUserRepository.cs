@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using System;
 using authServer.Models;
 using MongoDB.Driver;
 using System.Security.Claims;
@@ -11,30 +12,38 @@ namespace authServer.Repositories
         private const string collectionName = "Users";
         private readonly IMongoCollection<User> collection;
         private readonly FilterDefinitionBuilder<User> filterDefinitionBuilder = Builders<User>.Filter;
+        private readonly IAuthContainerModel model;
+        private readonly IAuthService service;
 
-        /**
-         * <summary> 
-         * initialisates the collection
-         * </summary>
-         *
-         * <param name="mongoClient">Correct MongoClient</param>
-         */
+        /// <summary> 
+        /// initialisates the collection and the jwt service
+        /// </summary>
+        ///
+        /// <param name="mongoClient">Correct MongoClient</param>
         public MongoDbUserRepository(IMongoClient mongoClient)
         {
             IMongoDatabase database = mongoClient.GetDatabase(Startup.databaseName);
             collection = database.GetCollection<User>(collectionName);
+            model = new JWTContainerModel();
+            service = new JWTService(model.secredKey);
         }
 
         public async Task register(User user)
         {
-            if (!(await getUser(user.name) is null)) return;
-
             await collection.InsertOneAsync(user);
         }
 
         public async Task<User> getUser(string name)
         {
             var filter = filterDefinitionBuilder.Eq(user => user.name, name);
+            var user = await collection.Find(filter).SingleOrDefaultAsync();
+
+            return user;
+        }
+
+        public async Task<User> getUser(Guid id)
+        {
+            var filter = filterDefinitionBuilder.Eq(user => user.id, id);
             var user = await collection.Find(filter).SingleOrDefaultAsync();
 
             return user;
@@ -50,22 +59,22 @@ namespace authServer.Repositories
             IAuthContainerModel model = new JWTContainerModel()
             {
                 claims = new Claim[] {
-                    new Claim(ClaimTypes.Name, name)
+                    new Claim(ClaimTypes.Name, name),
+                    new Claim("id", user.id.ToString())
                 }
             };
-            IAuthService authService = new JWTService(model.secredKey);
 
-            string token = authService.generateToken(model);
+            string token = service.generateToken(model);
 
-            if (!authService.isTokenValid(token))
+            if (!service.isTokenValid(token))
                 return "Token is not valid";
 
             return token;
         }
 
-        public async Task<string> changePassword(string oldPassword, string newPassword, string username)
+        public async Task<string> changePassword(string oldPassword, string newPassword, Guid id)
         {
-            User user = await getUser(username);
+            User user = await getUser(id);
 
             if (user is null) return "User not found";
             if (!BCrypt.Net.BCrypt.Verify(oldPassword, user.hash)) return "Password is wrong";
@@ -74,16 +83,16 @@ namespace authServer.Repositories
             {
                 hash = BCrypt.Net.BCrypt.HashPassword(newPassword)
             };
-            var filter = filterDefinitionBuilder.Eq(user => user.name, username);
+            var filter = filterDefinitionBuilder.Eq(user => user.id, id);
 
             await collection.ReplaceOneAsync(filter, newUser);
 
             return "Ok";
         }
 
-        public async Task<string> changeUsername(string oldUsername, string newUsername)
+        public async Task<string> changeUsername(Guid id, string newUsername)
         {
-            User user = await getUser(oldUsername);
+            User user = await getUser(id);
             User user2 = await getUser(newUsername);
 
             if (user is null) return "User not found";
@@ -93,7 +102,7 @@ namespace authServer.Repositories
             {
                 name = newUsername
             };
-            var filter = filterDefinitionBuilder.Eq(user => user.name, oldUsername);
+            var filter = filterDefinitionBuilder.Eq(user => user.id, id);
 
             await collection.ReplaceOneAsync(filter, newUser);
 
