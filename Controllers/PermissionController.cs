@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System;
 using System.Collections.Generic;
 using authServer.Dtos;
@@ -25,19 +26,79 @@ namespace authServer.Controller
         }
 
         #region Controller
+        [HttpGet]
+        public async Task<ActionResult<string[]>> getPermissions()
+        {
+            try
+            {
+                Dictionary<string, string> claimDirectory = service.getClaims(Request.Headers["Authorization"]);
+                string name = claimDirectory.GetValueOrDefault(ClaimTypes.Name.ToString());
+
+                if (!(await repository.hasPermission(name, "permission", "see"))) return BadRequest("No Permission to perform this action");
+
+                return await repository.getPermissions(name);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
         [HttpPost("addPermission")]
         public async Task<ActionResult<string>> addPermission(PermissionDto dto)
         {
             try
             {
-                Dictionary<string, string> claimDirectory = service.getClaims(Request.Headers["Autorisation"]);
-                Guid id = Guid.Parse(claimDirectory.GetValueOrDefault("id"));
+                Dictionary<string, string> claimDirectory = service.getClaims(Request.Headers["Authorization"]);
+                string name = claimDirectory.GetValueOrDefault(ClaimTypes.Name.ToString());
 
-                if (!(await repository.hasPermission(id, "permission", "change"))) return BadRequest("No Permission to perform this action");
+                if (!(await repository.hasPermission(name, "permission", "add"))) return BadRequest("No Permission to perform this action");
 
-                await repository.addPermission(id, dto.permission);
+                await repository.addPermission(dto.username, dto.permission);
 
                 return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPost("removePermission")]
+        public async Task<ActionResult<string>> removePermission(PermissionDto dto)
+        {
+            try
+            {
+                Dictionary<string, string> claimDirectory = service.getClaims(Request.Headers["Authorization"]);
+                string name = claimDirectory.GetValueOrDefault(ClaimTypes.Name.ToString());
+
+                if (!(await repository.hasPermission(name, "permission", "remove"))) return BadRequest("No Permission to perform this action");
+
+                await repository.removePermission(dto.username, dto.permission);
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPost("hasPermission")]
+        public async Task<ActionResult<bool>> hasPermission(PermissionDto dto)
+        {
+            try
+            {
+                Dictionary<string, string> claimDirectory = service.getClaims(Request.Headers["Authorization"]);
+                string name = claimDirectory.GetValueOrDefault(ClaimTypes.Name.ToString());
+
+                if (!(await repository.hasPermission(name, "permission", "see"))) return BadRequest("No Permission to perform this action");
+
+                string[] permissions = dto.permission.Split('.');
+
+                if (permissions.Length != 2) return BadRequest("Wrong permissionformat. Use permissiongroup.permission");
+
+                return Ok(await repository.hasPermission(dto.username, permissions[0], permissions[1]));
             }
             catch (Exception e)
             {

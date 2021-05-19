@@ -42,6 +42,7 @@ namespace authServer
             });
 
             services.AddSingleton<IUserRepository, MongoDbUserRepository>();
+            services.AddSingleton<IPermissionRepository, MongoPermissionRepository>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
