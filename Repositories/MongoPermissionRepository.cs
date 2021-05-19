@@ -12,6 +12,7 @@ namespace authServer.Repositories
         private const string collectionName = "Permissions";
         private readonly IMongoCollection<Permission> collection;
         private readonly FilterDefinitionBuilder<Permission> filterDefinitionBuilder = Builders<Permission>.Filter;
+        private readonly IUserRepository userRepository;
 
         /// <summary> 
         /// initialisates the collection
@@ -22,18 +23,25 @@ namespace authServer.Repositories
         {
             IMongoDatabase database = mongoClient.GetDatabase(Startup.databaseName);
             collection = database.GetCollection<Permission>(collectionName);
+            userRepository = new MongoDbUserRepository(mongoClient);
         }
 
-        public async Task<string[]> getPermissions(User user)
+        public async Task<string[]> getPermissions(Guid id)
         {
+            User user = await userRepository.getUser(id);
+            if (user is null) return new string[] { };
+
             var filter = filterDefinitionBuilder.Eq(permission => permission.name, user.name);
             Permission permissions = await collection.Find(filter).SingleOrDefaultAsync();
 
             return (permissions is null) ? new string[] { } : permissions.permissions;
         }
 
-        public async Task addPermission(User user, string permission)
+        public async Task addPermission(Guid id, string permission)
         {
+            User user = await userRepository.getUser(id);
+            if (user is null) throw new Exception("User does not exist");
+
             var filter = filterDefinitionBuilder.Eq(permission => permission.name, user.name);
             Permission permissions = await collection.Find(filter).SingleOrDefaultAsync();
             Permission newPermssions;
@@ -61,8 +69,11 @@ namespace authServer.Repositories
             await collection.InsertOneAsync(newPermssions);
         }
 
-        public async Task removePermission(User user, string permission)
+        public async Task removePermission(Guid id, string permission)
         {
+            User user = await userRepository.getUser(id);
+            if (user is null) throw new Exception("User does not exist");
+
             var filter = filterDefinitionBuilder.Eq(permission => permission.name, user.name);
             Permission permissions = await collection.Find(filter).SingleOrDefaultAsync();
 
@@ -79,13 +90,18 @@ namespace authServer.Repositories
             await collection.ReplaceOneAsync(filter, newPermssions);
         }
 
-        public async Task<bool> hasPermission(User user, string permission)
+        public async Task<bool> hasPermission(Guid id, string permissionGroup, string permission)
         {
-            string[] permissions = await getPermissions(user);
+            User user = await userRepository.getUser(id);
+            if (user is null) throw new Exception("User does not exist");
+
+            string[] permissions = await getPermissions(user.id);
 
             if (permission is null) return false;
 
-            if (Array.Exists(permissions, element => element == permission))
+            if (Array.Exists(permissions, element => element == permissionGroup + "." + permission)
+                    || Array.Exists(permissions, element => element == permissionGroup + ".*")
+                    || Array.Exists(permissions, element => element == "*"))
             {
                 return true;
             }

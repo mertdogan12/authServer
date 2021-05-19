@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using System;
 using authServer.Models;
 
 namespace authServer.Repositories
@@ -8,28 +9,28 @@ namespace authServer.Repositories
         /// <summary>
         /// Gets all permission from an User
         /// </summary>
-        /// <param name="user"/>
-        public Task<string[]> getPermissions(User user);
+        /// <param name="id"/>
+        public Task<string[]> getPermissions(Guid id);
 
         /// <summary>
         /// Adds an permission
         /// </summary>
         /// <param name="user"/>
         /// <param name="permission"/>
-        public Task addPermission(User user, string permission);
+        public Task addPermission(Guid id, string permission);
 
         /// <summary>
         /// Removes an permission
         /// </summary>
         /// <param name="user"/>
         /// <param name="permission"/>
-        public Task removePermission(User user, string permission);
+        public Task removePermission(Guid id, string permission);
 
         /// <summary>
         /// Checks if the user has an permission
         /// </summary>
         /// <param name="user"/>
         /// <param name="permission"/>
-        public Task<bool> hasPermission(User user, string permission);
+        public Task<bool> hasPermission(Guid id, string permissionGroup, string permission);
     }
 }
