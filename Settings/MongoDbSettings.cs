@@ -1,13 +1,30 @@
+using System;
+
 namespace authServer.Settings
 {
     public class MongoDbSettings
     {
-        public string Host { get; set; }
-        public int Port { get; set; }
-        public string Database { get; set; }
-        public string User { get; set; }
-        public string Password { get; set; }
-        public string Url { get; set; }
+        public string Host = Environment.GetEnvironmentVariable("ASHOST");
+        public string Database = Environment.GetEnvironmentVariable("ASDATABASE");
+        public string User = Environment.GetEnvironmentVariable("ASUSER");
+        public string Password = Environment.GetEnvironmentVariable("ASPW");
+        public string Url = Environment.GetEnvironmentVariable("ASURL");
+
+        public int Port
+        {
+            get
+            {
+                try
+                {
+                    return Int32.Parse(Environment.GetEnvironmentVariable("ASPORT"));
+                }
+                catch (FormatException e)
+                {
+                    Console.WriteLine($"Error while parsing ASPORT env var (Port set to 27017) Error : {e}");
+                    return 27017;
+                }
+            }
+        }
 
         public string connectionString
         {

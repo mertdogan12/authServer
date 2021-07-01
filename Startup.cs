@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using System;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,17 +24,18 @@ namespace authServer
 
         public IConfiguration Configuration { get; }
         public static string databaseName = "";
-        public static string secredKey = "";
+        public static string secredKey = Environment.GetEnvironmentVariable("ASSECRET");
 
         // This methrunod gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
 
-            var settings = Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
-            secredKey = Configuration.GetSection("SecredKey").Get<string>();
+            var settings = new MongoDbSettings();
 
             BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
             BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
+
+            Console.WriteLine(Environment.GetEnvironmentVariable("ASDATABASE"));
 
             services.AddSingleton<IMongoClient>(ServiceProvider =>
             {
