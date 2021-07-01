@@ -2,16 +2,16 @@ version: "3"
 
 services:
   server:
-    image: mertdogan/auth-server:1.3
+    image: mertdogan/auth-server
     container_name: auth-server
     restart: always
-    ports:
-      - "5000:80"
     environment:
-      - ASHOST=host
+      - ASHOST=Host
       - ASPORT=27017
       - ASDATABASE=authServer
-      - ASUSER=user
-      - ASPW=database password
-      - ASURL=mongodb url
-      - ASSECRET=jwt secret
+      - ASUSER=User
+      - ASPW=Password
+      - ASURL=Mongo Url
+      - ASSECRET=Jwt Secret
+    ports:
+      - "5000:80"

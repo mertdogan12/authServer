@@ -4,11 +4,11 @@ namespace authServer.Settings
 {
     public class MongoDbSettings
     {
-        public string Host = Environment.GetEnvironmentVariable("ASHOST");
-        public string Database = Environment.GetEnvironmentVariable("ASDATABASE");
-        public string User = Environment.GetEnvironmentVariable("ASUSER");
-        public string Password = Environment.GetEnvironmentVariable("ASPW");
-        public string Url = Environment.GetEnvironmentVariable("ASURL");
+        public string Host = Environment.GetEnvironmentVariable("ASHOST").ToString();
+        public string Database = Environment.GetEnvironmentVariable("ASDATABASE").ToString();
+        public string User = Environment.GetEnvironmentVariable("ASUSER").ToString();
+        public string Password = Environment.GetEnvironmentVariable("ASPW").ToString();
+        public string Url = Environment.GetEnvironmentVariable("ASURL").ToString();
 
         public int Port
         {
@@ -16,7 +16,7 @@ namespace authServer.Settings
             {
                 try
                 {
-                    return Int32.Parse(Environment.GetEnvironmentVariable("ASPORT"));
+                    return Int32.Parse(Environment.GetEnvironmentVariable("ASPORT").ToString());
                 }
                 catch (FormatException e)
                 {
