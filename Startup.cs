@@ -29,8 +29,12 @@ namespace authServer
         // This methrunod gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             var settings = new MongoDbSettings();
+
+            services.AddCors(c =>
+            {
+                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());
+            });
 
             BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
             BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
@@ -64,6 +68,8 @@ namespace authServer
             }
 
             app.UseRouting();
+
+            app.UseCors(options => options.AllowAnyOrigin());
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
