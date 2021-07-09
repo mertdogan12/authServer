@@ -11,6 +11,13 @@
   - Database: ASDATABASE
   - User: ASUSER
   - Password: ASPW
-  - Url: ASURL
+  - Host: ASHOST
+  - MongoDB Url: ASURL
+    - placeholders
+      - User: <user>
+      - Password: <password>
+      - Port: <port>
+      - Database: <database>
+      - Host: <host>
 - Jwt
   - Secret: ASSECRET
