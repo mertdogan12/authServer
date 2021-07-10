@@ -31,9 +31,14 @@ namespace authServer
         {
             var settings = new MongoDbSettings();
 
-            services.AddCors(c =>
+            services.AddCors(options =>
             {
-                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());
+                options.AddPolicy("AllowAnyOrigin", builder =>
+                        {
+                            builder.AllowAnyOrigin()
+                            .AllowAnyHeader()
+                            .AllowAnyHeader();
+                        });
             });
 
             BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
@@ -67,9 +72,9 @@ namespace authServer
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "authServer v1"));
             }
 
-            app.UseRouting();
+            app.UseCors("AllowAnyOrigin");
 
-            app.UseCors(options => options.AllowAnyOrigin());
+            app.UseRouting();
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
