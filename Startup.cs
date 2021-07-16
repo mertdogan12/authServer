@@ -44,8 +44,6 @@ namespace authServer
             BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
             BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
 
-            Console.WriteLine(Environment.GetEnvironmentVariable("ASDATABASE"));
-
             services.AddSingleton<IMongoClient>(ServiceProvider =>
             {
                 databaseName = settings.Database;

@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  authserver:
+    image: mertdogan/auth-server:dev
+    container_name: auth-server
+    restart: always
+    volumes:
+      - /home/mert/authServer:/app
+    environment:
+      - ASHOST=192.168.178.27
+      - ASPORT=27017
+      - ASDATABASE=authServer
+      - ASUSER=authServer
+      - ASPW=123456
+      - ASURL=mongodb://<user>:<password>@<host>:<port>/<database>
+      - ASSECRET=cllQTTQ4eE1iTmU1aHh4V0NaRzdQM1RSSnlzZktaYQ==
+    ports:
+      - "5000:5000"
+  mongo:
+    image: mongo
+    restart: always
+    container_name: mongodb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mert
+      - MONGO_INITDB_ROOT_PASSWORD=123456
+    volumes: 
+      - /home/mert/mongodb/database:/data/db
+    ports:
+      - 27017:27017
