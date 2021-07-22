@@ -13,10 +13,10 @@
   - Host: ASHOST
   - MongoDB Url: ASURL
     - placeholders
-      - User: <user>
-      - Password: <password>
-      - Port: <port>
-      - Database: <database>
-      - Host: <host>
+      - User: \<user>
+      - Password: \<password>
+      - Port: \<port>
+      - Database: \<database>
+      - Host: \<host>
 - Jwt
   - Secret: ASSECRET
