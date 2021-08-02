@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using authServer.Models;
 using System;
 
@@ -62,6 +63,6 @@ namespace authServer.Repositories
         /// </summary/>
         /// 
         /// <returns/>
-        Task<User[]> getUsers();
+        Task<List<User>> getUsers();
     }
 }

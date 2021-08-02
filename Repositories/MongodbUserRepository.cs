@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using System;
 using authServer.Models;
 using MongoDB.Driver;
@@ -109,11 +110,11 @@ namespace authServer.Repositories
             return "Ok";
         }
 
-        public async Task<User[]> getUsers()
+        public async Task<List<User>> getUsers()
         {
-            var UserList = await collection.Find(_ => true).ToListAsync();
+            List<User> userList = await collection.Find(_ => true).ToListAsync();
 
-            return UserList.ToArray();
+            return userList;
         }
     }
 }

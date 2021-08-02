@@ -133,7 +133,14 @@ namespace authServer.Controller
 
             if (!(await permissionRepository.hasPermission(id, "users", "getUsers"))) return BadRequest("You have not the Permission to perfrom this command");
 
-            return Ok(await repository.getUsers());
+            List<User> users = await repository.getUsers();
+            List<UserDto> userDtos = new();
+            users.ForEach((User user) =>
+                    {
+                        userDtos.Add(user.AsDto());
+                    });
+
+            return Ok(userDtos);
         }
         #endregion
     }
