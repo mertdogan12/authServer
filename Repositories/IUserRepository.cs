@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using authServer.Models;
 using System;
 
@@ -56,5 +57,12 @@ namespace authServer.Repositories
         /// <param name="newUsername"/>
         /// <returns/>
         Task<string> changeUsername(Guid id, string newUsername);
+
+        /// <summary>
+        /// Gets all users
+        /// </summary/>
+        /// 
+        /// <returns/>
+        Task<List<User>> getUsers();
     }
 }

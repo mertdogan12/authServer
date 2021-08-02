@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using System;
 using authServer.Models;
 using MongoDB.Driver;
@@ -107,6 +108,13 @@ namespace authServer.Repositories
             await collection.ReplaceOneAsync(filter, newUser);
 
             return "Ok";
+        }
+
+        public async Task<List<User>> getUsers()
+        {
+            List<User> userList = await collection.Find(_ => true).ToListAsync();
+
+            return userList;
         }
     }
 }
