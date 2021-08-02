@@ -15,12 +15,14 @@ namespace authServer.Controller
     public class UserController : ControllerBase
     {
         private readonly IUserRepository repository;
+        private readonly IPermissionRepository permissionRepository;
         private readonly IAuthContainerModel model;
         private readonly IAuthService service;
 
-        public UserController(IUserRepository repository)
+        public UserController(IUserRepository repository, IPermissionRepository permissionRepository)
         {
             this.repository = repository;
+            this.permissionRepository = permissionRepository;
             model = new JWTContainerModel();
             service = new JWTService(model.secredKey);
         }
@@ -111,6 +113,26 @@ namespace authServer.Controller
             var output = await repository.changeUsername(id, dto.newUsername);
 
             return (output == "Ok") ? Ok() : BadRequest(output);
+        }
+
+        // users/getUsers
+        [HttpGet("getUsers")]
+        public async Task<ActionResult<User[]>> getUsers()
+        {
+            Guid id = Guid.Empty;
+
+            try
+            {
+                Dictionary<string, string> claimsDictionary = service.getClaims(Request.Headers["Authorization"]);
+                id = Guid.Parse(claimsDictionary.GetValueOrDefault("id"));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            // Todo Check permssion
+
         }
         #endregion
     }

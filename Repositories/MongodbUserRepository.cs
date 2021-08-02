@@ -108,5 +108,12 @@ namespace authServer.Repositories
 
             return "Ok";
         }
+
+        public async Task<User[]> getUsers()
+        {
+            var UserList = await collection.Find(_ => true).ToListAsync();
+
+            return UserList.ToArray();
+        }
     }
 }
