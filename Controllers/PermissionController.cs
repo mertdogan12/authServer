@@ -18,7 +18,7 @@ namespace authServer.Controller
         private readonly IAuthContainerModel model;
         private readonly IAuthService service;
 
-        public PermissionController(IPermissionRepository repository)
+        public PermissionController(IPermissionRepository repository, IUserRepository userRepository)
         {
             this.repository = repository;
             model = new JWTContainerModel();
@@ -26,17 +26,18 @@ namespace authServer.Controller
         }
 
         #region Controller
-        [HttpGet]
-        public async Task<ActionResult<string[]>> getPermissions()
+        // permission/{id}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<string[]>> getPermissions(Guid id)
         {
             try
             {
                 Dictionary<string, string> claimDirectory = service.getClaims(Request.Headers["Authorization"]);
-                string name = claimDirectory.GetValueOrDefault(ClaimTypes.Name.ToString());
+                Guid userid = Guid.Parse(claimDirectory.GetValueOrDefault("id"));
 
-                if (!(await repository.hasPermission(name, "permission", "see"))) return BadRequest("No Permission to perform this action");
+                if (id != userid && !(await repository.hasPermission(id, "permission", "see"))) return BadRequest("No Permission to perform this action");
 
-                return await repository.getPermissions(name);
+                return await repository.getPermissions(id);
             }
             catch (Exception e)
             {
@@ -50,11 +51,11 @@ namespace authServer.Controller
             try
             {
                 Dictionary<string, string> claimDirectory = service.getClaims(Request.Headers["Authorization"]);
-                string name = claimDirectory.GetValueOrDefault(ClaimTypes.Name.ToString());
+                Guid id = Guid.Parse(claimDirectory.GetValueOrDefault("id"));
 
-                if (!(await repository.hasPermission(name, "permission", "add"))) return BadRequest("No Permission to perform this action");
+                if (!(await repository.hasPermission(id, "permission", "add"))) return BadRequest("No Permission to perform this action");
 
-                await repository.addPermission(dto.username, dto.permission);
+                await repository.addPermission(dto.id, dto.permission);
 
                 return Ok();
             }
@@ -70,11 +71,11 @@ namespace authServer.Controller
             try
             {
                 Dictionary<string, string> claimDirectory = service.getClaims(Request.Headers["Authorization"]);
-                string name = claimDirectory.GetValueOrDefault(ClaimTypes.Name.ToString());
+                Guid id = Guid.Parse(claimDirectory.GetValueOrDefault("id"));
 
-                if (!(await repository.hasPermission(name, "permission", "remove"))) return BadRequest("No Permission to perform this action");
+                if (!(await repository.hasPermission(id, "permission", "remove"))) return BadRequest("No Permission to perform this action");
 
-                await repository.removePermission(dto.username, dto.permission);
+                await repository.removePermission(dto.id, dto.permission);
 
                 return Ok();
             }
@@ -90,15 +91,15 @@ namespace authServer.Controller
             try
             {
                 Dictionary<string, string> claimDirectory = service.getClaims(Request.Headers["Authorization"]);
-                string name = claimDirectory.GetValueOrDefault(ClaimTypes.Name.ToString());
+                Guid id = Guid.Parse(claimDirectory.GetValueOrDefault("id"));
 
-                if (!(await repository.hasPermission(name, "permission", "see"))) return BadRequest("No Permission to perform this action");
+                if (!(await repository.hasPermission(id, "permission", "see"))) return BadRequest("No Permission to perform this action");
 
                 string[] permissions = dto.permission.Split('.');
 
                 if (permissions.Length != 2) return BadRequest("Wrong permissionformat. Use permissiongroup.permission");
 
-                return Ok(await repository.hasPermission(dto.username, permissions[0], permissions[1]));
+                return Ok(await repository.hasPermission(dto.id, permissions[0], permissions[1]));
             }
             catch (Exception e)
             {

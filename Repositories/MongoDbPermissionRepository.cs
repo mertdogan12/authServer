@@ -28,9 +28,6 @@ namespace authServer.Repositories
 
         public async Task<string[]> getPermissions(Guid id)
         {
-            User user = await userRepository.getUser(id);
-            if (user is null) return new string[] { };
-
             var filter = filterDefinitionBuilder.Eq(permission => permission.id, id);
             Permission permissions = await collection.Find(filter).SingleOrDefaultAsync();
 
@@ -39,10 +36,7 @@ namespace authServer.Repositories
 
         public async Task addPermission(Guid id, string permission)
         {
-            User user = await userRepository.getUser(id);
-            if (user is null) throw new Exception("User does not exist");
-
-            var filter = filterDefinitionBuilder.Eq(permission => permission.name, user.name);
+            var filter = filterDefinitionBuilder.Eq(permission => permission.id, id);
             Permission permissions = await collection.Find(filter).SingleOrDefaultAsync();
             Permission newPermssions;
 
@@ -50,8 +44,7 @@ namespace authServer.Repositories
             {
                 newPermssions = new()
                 {
-                    id = user.id,
-                    name = user.name,
+                    id = id,
                     permissions = new string[] { permission }
                 };
 
@@ -77,7 +70,7 @@ namespace authServer.Repositories
             User user = await userRepository.getUser(id);
             if (user is null) throw new Exception("User does not exist");
 
-            var filter = filterDefinitionBuilder.Eq(permission => permission.name, user.name);
+            var filter = filterDefinitionBuilder.Eq(permission => permission.id, user.id);
             Permission permissions = await collection.Find(filter).SingleOrDefaultAsync();
 
             if (permission is null) return;
@@ -95,10 +88,7 @@ namespace authServer.Repositories
 
         public async Task<bool> hasPermission(Guid id, string permissionGroup, string permission)
         {
-            User user = await userRepository.getUser(id);
-            if (user is null) throw new Exception("User does not exist");
-
-            string[] permissions = await getPermissions(user.id);
+            string[] permissions = await getPermissions(id);
 
             if (permission is null) return false;
 

@@ -14,21 +14,21 @@ namespace authServer.Repositories
         /// <summary>
         /// Adds an permission
         /// </summary>
-        /// <param name="user"/>
+        /// <param name="id"/>
         /// <param name="permission"/>
         public Task addPermission(Guid id, string permission);
 
         /// <summary>
         /// Removes an permission
         /// </summary>
-        /// <param name="user"/>
+        /// <param name="id"/>
         /// <param name="permission"/>
         public Task removePermission(Guid id, string permission);
 
         /// <summary>
         /// Checks if the user has an permission
         /// </summary>
-        /// <param name="user"/>
+        /// <param name="id"/>
         /// <param name="permission"/>
         public Task<bool> hasPermission(Guid id, string permissionGroup, string permission);
     }

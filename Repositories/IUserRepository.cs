@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using authServer.Models;
 using System;
-using authServer.Models;
 
 namespace authServer.Repositories
 {
