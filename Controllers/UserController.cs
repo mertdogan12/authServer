@@ -131,8 +131,9 @@ namespace authServer.Controller
                 return BadRequest(e.Message);
             }
 
-            // Todo Check permssion
+            if (!(await permissionRepository.hasPermission(id, "users", "getUsers"))) return BadRequest("You have not the Permission to perfrom this command");
 
+            return Ok(await repository.getUsers());
         }
         #endregion
     }
