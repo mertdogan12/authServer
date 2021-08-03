@@ -53,7 +53,7 @@ namespace authServer.Controller
                 Dictionary<string, string> claimDirectory = service.getClaims(Request.Headers["Authorization"]);
                 Guid id = Guid.Parse(claimDirectory.GetValueOrDefault("id"));
 
-                if (!(await repository.hasPermission(id, "permission", "add"))) return BadRequest("No Permission to perform this action");
+                if (!(await repository.hasPermission(id, "adminsettings", "add-permission"))) return BadRequest("No Permission to perform this action");
 
                 await repository.addPermission(dto.id, dto.permission);
 
@@ -73,7 +73,7 @@ namespace authServer.Controller
                 Dictionary<string, string> claimDirectory = service.getClaims(Request.Headers["Authorization"]);
                 Guid id = Guid.Parse(claimDirectory.GetValueOrDefault("id"));
 
-                if (!(await repository.hasPermission(id, "permission", "remove"))) return BadRequest("No Permission to perform this action");
+                if (!(await repository.hasPermission(id, "adminssettings", "remove-permission"))) return BadRequest("No Permission to perform this action");
 
                 await repository.removePermission(dto.id, dto.permission);
 
@@ -93,7 +93,7 @@ namespace authServer.Controller
                 Dictionary<string, string> claimDirectory = service.getClaims(Request.Headers["Authorization"]);
                 Guid id = Guid.Parse(claimDirectory.GetValueOrDefault("id"));
 
-                if (!(await repository.hasPermission(id, "permission", "see"))) return BadRequest("No Permission to perform this action");
+                if (!(await repository.hasPermission(id, "adminsettings", "see-permission"))) return BadRequest("No Permission to perform this action");
 
                 string[] permissions = dto.permission.Split('.');
 
