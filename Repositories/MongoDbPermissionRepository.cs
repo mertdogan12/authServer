@@ -92,6 +92,16 @@ namespace authServer.Repositories
 
             if (permission is null) return false;
 
+            if (permission == "?")
+            {
+                foreach (string perm in permissions)
+                {
+                    if (perm.Split(".")[0] == permissionGroup) return true;
+                }
+
+                return false;
+            }
+
             if (Array.Exists(permissions, element => element == permissionGroup + "." + permission)
                     || Array.Exists(permissions, element => element == permissionGroup + ".*")
                     || Array.Exists(permissions, element => element == "*"))
