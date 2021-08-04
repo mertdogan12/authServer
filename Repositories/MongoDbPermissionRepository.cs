@@ -92,6 +92,8 @@ namespace authServer.Repositories
 
             if (permission is null) return false;
 
+            if (Array.Exists(permissions, element => element == permissionGroup + ".*" || Array.Exists(permissions, element => element == "*"))) return true;
+
             if (permission == "?")
             {
                 foreach (string perm in permissions)
@@ -102,9 +104,7 @@ namespace authServer.Repositories
                 return false;
             }
 
-            if (Array.Exists(permissions, element => element == permissionGroup + "." + permission)
-                    || Array.Exists(permissions, element => element == permissionGroup + ".*")
-                    || Array.Exists(permissions, element => element == "*"))
+            if (Array.Exists(permissions, element => element == permissionGroup + "." + permission))
             {
                 return true;
             }
