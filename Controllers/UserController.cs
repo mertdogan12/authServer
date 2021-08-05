@@ -131,7 +131,7 @@ namespace authServer.Controller
                 return BadRequest(e.Message);
             }
 
-            if (!(await permissionRepository.hasPermission(id, "users", "getUsers"))) return BadRequest("You have not the Permission to perfrom this command");
+            if (!(await permissionRepository.hasPermission(id, "adminsettings", "see-permissions"))) return BadRequest("You have not the Permission to perfrom this command");
 
             List<User> users = await repository.getUsers();
             List<UserDto> userDtos = new();
