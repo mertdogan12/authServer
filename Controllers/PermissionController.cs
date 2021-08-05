@@ -35,7 +35,7 @@ namespace authServer.Controller
                 Dictionary<string, string> claimDirectory = service.getClaims(Request.Headers["Authorization"]);
                 Guid userid = Guid.Parse(claimDirectory.GetValueOrDefault("id"));
 
-                if (id != userid && !(await repository.hasPermission(id, "adminsettings", "see-permissions"))) return BadRequest("No Permission to perform this action");
+                if (id != userid && !(await repository.hasPermission(userid, "adminsettings", "see-permissions"))) return BadRequest("No Permission to perform this action");
 
                 return await repository.getPermissions(id);
             }
