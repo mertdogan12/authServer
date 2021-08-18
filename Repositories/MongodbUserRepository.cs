@@ -116,5 +116,10 @@ namespace authServer.Repositories
 
             return userList;
         }
+
+        public async Task deleteUser(Guid id)
+        {
+            await collection.DeleteOneAsync(user => user.id == id);
+        }
     }
 }
