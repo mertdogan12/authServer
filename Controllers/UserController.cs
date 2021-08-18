@@ -153,7 +153,7 @@ namespace authServer.Controller
             try
             {
                 Dictionary<string, string> claimsDictionary = service.getClaims(Request.Headers["Authorization"]);
-                id = Guid.Parse(claimsDictionary.GetValueOrDefault("id"));
+                userid = Guid.Parse(claimsDictionary.GetValueOrDefault("id"));
             }
             catch (Exception e)
             {
@@ -164,6 +164,7 @@ namespace authServer.Controller
                 return BadRequest("You have not the Permission to perfrom this command");
 
             await repository.deleteUser(id);
+            await permissionRepository.deletePermissionUser(id);
 
             return Ok("User has been deleted");
         }

@@ -92,7 +92,9 @@ namespace authServer.Repositories
 
             if (permission is null) return false;
 
-            if (Array.Exists(permissions, element => element == permissionGroup + ".*" || Array.Exists(permissions, element => element == "*"))) return true;
+            if (Array.Exists(permissions, element => element == permissionGroup + ".*"
+                        || Array.Exists(permissions, element => element == permissionGroup + "." + permission)
+                        || Array.Exists(permissions, element => element == "*"))) return true;
 
             if (permission == "?")
             {
@@ -104,12 +106,12 @@ namespace authServer.Repositories
                 return false;
             }
 
-            if (Array.Exists(permissions, element => element == permissionGroup + "." + permission))
-            {
-                return true;
-            }
-            else
-                return false;
+            return false;
+        }
+
+        public async Task deletePermissionUser(Guid id)
+        {
+            await collection.DeleteOneAsync(user => user.id == id);
         }
     }
 }
