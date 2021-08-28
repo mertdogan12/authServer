@@ -64,5 +64,12 @@ namespace authServer.Repositories
         /// 
         /// <returns/>
         Task<List<User>> getUsers();
+
+        /// <summary>
+        /// Removes an user
+        /// </summary>
+        ///
+        /// <param name="id"/>
+        Task deleteUser(Guid id);
     }
 }

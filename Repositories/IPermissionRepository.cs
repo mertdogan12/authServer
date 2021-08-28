@@ -31,5 +31,12 @@ namespace authServer.Repositories
         /// <param name="id"/>
         /// <param name="permission"/>
         public Task<bool> hasPermission(Guid id, string permissionGroup, string permission);
+
+        /// <summary>
+        /// Removes an permission user
+        /// </summary>
+        ///
+        /// <param name="id"/>
+        Task deletePermissionUser(Guid id);
     }
 }

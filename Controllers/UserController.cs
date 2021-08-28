@@ -131,7 +131,8 @@ namespace authServer.Controller
                 return BadRequest(e.Message);
             }
 
-            if (!(await permissionRepository.hasPermission(id, "adminsettings", "see-permissions"))) return BadRequest("You have not the Permission to perfrom this command");
+            if (!(await permissionRepository.hasPermission(id, "adminsettings", "see-permissions")))
+                return BadRequest("You have not the Permission to perfrom this command");
 
             List<User> users = await repository.getUsers();
             List<UserDto> userDtos = new();
@@ -141,6 +142,31 @@ namespace authServer.Controller
                     });
 
             return Ok(userDtos);
+        }
+
+        // users/deleteUser/{id}
+        [HttpGet("deleteUser/{id}")]
+        public async Task<ActionResult<string>> deleteUser(Guid id)
+        {
+            Guid userid = Guid.Empty;
+
+            try
+            {
+                Dictionary<string, string> claimsDictionary = service.getClaims(Request.Headers["Authorization"]);
+                userid = Guid.Parse(claimsDictionary.GetValueOrDefault("id"));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            if (id != userid && !(await permissionRepository.hasPermission(userid, "adminsettings", "delete-user")))
+                return BadRequest("You have not the Permission to perfrom this command");
+
+            await repository.deleteUser(id);
+            await permissionRepository.deletePermissionUser(id);
+
+            return Ok("User has been deleted");
         }
         #endregion
     }
